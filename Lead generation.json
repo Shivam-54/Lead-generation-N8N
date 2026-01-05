@@ -1,0 +1,564 @@
+{
+  "name": "Lead generation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8",
+          "mode": "list",
+          "cachedResultName": "Lead generation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Roles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7634dfa0-d0fa-4080-9555-9ea083a3105f",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "i7PiR7TLDZHFnffQ",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "40745cd0-e2d5-4723-9d7f-4095765c84ab",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Run",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0ce9402e-7b87-4eea-9078-0e7d350fa478",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "=nwua9Gu5YrADL7ZDj",
+          "mode": "id"
+        },
+        "customBody": "={\n    \"includeWebResults\": false,\n    \"language\": \"en\",\n    \"locationQuery\": \"{{ $json.Location }}\",\n    \"maxCrawledPlacesPerSearch\": {{ $json.Role }},\n    \"maxImages\": 0,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"scrapeContacts\": false,\n    \"scrapeDirectories\": false,\n    \"scrapeImageAuthors\": false,\n    \"scrapePlaceDetailPage\": false,\n    \"scrapeReviewsPersonalData\": true,\n    \"scrapeSocialMediaProfiles\": {\n        \"facebooks\": false,\n        \"instagrams\": false,\n        \"tiktoks\": false,\n        \"twitters\": false,\n        \"youtubes\": false\n    },\n    \"scrapeTableReservationProvider\": false,\n    \"searchStringsArray\": [\n        \"{{ $json['Company type'] }}\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "authentication": "apifyOAuth2Api"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1245d84c-d9e7-4e15-a4c0-253fad0cb419",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyOAuth2Api": {
+          "id": "BLSvAVnEhVcv6RM0",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f14822ab-2599-4f1c-9b94-db14851fcd62",
+              "leftValue": "={{ $json.website }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "14345a14-9c45-40ab-820e-c9b320fa9ace",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "d8160c17-0c0b-4ab3-b177-f4133a45a01b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        944,
+        192
+      ],
+      "id": "ac100292-cc8d-4dfa-a07e-fe9418c7f11a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anymailfinder.com/v5.1/find-email/decision-maker",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "fnQQtojVNCQDrTShEKIuHLM2"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"domain\": \"{{ $json.domain }}\",\n  \"decision_maker_category\": [\n    \"ceo\"\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "31247863-456e-44ac-a385-35d6ba63e5d8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ { \"domain\": $json.website.replaceAll('http://', '').replaceAll('https://', '').split('/').first().replaceAll('www.', '') } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -64
+      ],
+      "id": "46337890-fb03-4f2c-aeb6-77296f2c4fcb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "432d83e5-4c11-4daa-a8a0-5845f48f7206",
+              "leftValue": "={{ $json.email_status }}",
+              "rightValue": "valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "90ba3a74-6bf7-4b13-ab8d-6a1ea394111d",
+              "leftValue": "={{ $json.person_full_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1424,
+        -64
+      ],
+      "id": "6e2f4a63-9235-43e9-a00c-202be2e29513",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "url": "=https://{{ $json.input.domain }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1664,
+        -64
+      ],
+      "id": "e599c2a3-c7e5-4499-b382-cfda9a0144d4",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "website scrap",
+              "cssSelector": "body"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        320
+      ],
+      "id": "5f457d42-0bd1-46c7-997d-a07549669aeb",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You will take summaries into cold-email icebreakers that feel tight, specific, and quietly personal—just enough to signal that the rest of the message is tailored.\n\nYou’ll output your icebreakers in this JSON format (don’t alter the variable names):\n{\n  \"icebreaker\": \"Hey {name}. Love {interesting_fact}—also doing/like/a fan of {otherFact}. Wanted to run something by you.\\n\\nI hope you'll forgive me, but I creeped your site quite a bit, and know that {otherFact} is important to you guys (or at least I'm assuming this given the focus on {fourthFact}). I put something together a few months ago that I think could help. To make a long story short, it's an outreach system that uses AI to find people hiring website devs. Then pitches them with templates (actually makes them a demo website). Costs just a few cents to run, very high converting, and I think it's in line with {someImpliedBeliefTheyHave}\"\n}\nRules:\n\nKeep the tone sparse, dry, and to-the-point.\n\nUse the JSON format exactly as written above.\n\nShorten company names whenever possible (“Mayo” instead of “Mayo Inc.”, “AMS” instead of “AMS Professional Services”).\n\nSame idea with locations (“San Fran” instead of “San Francisco”, “BC” instead of “British Columbia”).\n\nFor variables, pull out small, specific details—not the obvious stuff. No generic compliments. Aim for details that look hand-picked from deep browsing.\n"
+            },
+            {
+              "content": "=Profile: {{ $('Filter2').item.json.person_full_name }}\n{{ $('Filter2').item.json.person_job_title }}\n\nCompany Name: {{ $('Run an Actor and get dataset').item.json.title }}\n\nWebsite Scrape: {{ $json['website scrap'] }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1472,
+        320
+      ],
+      "id": "920b36b5-b59a-4369-9625-fe8b0c532326",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWCqC0CVGVsyZOjy",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8",
+          "mode": "list",
+          "cachedResultName": "Lead generation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 889253344,
+          "mode": "list",
+          "cachedResultName": "Emails ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Z525xNL1hPCaq6m_xvZom1XtB-t4VJs3D07c16eWC8/edit#gid=889253344"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        320
+      ],
+      "id": "79cc418f-bf66-434d-bcf4-3e4b3d3a98be",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "70SNV1eCiSisvlRd",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "716d8927-6f93-4c21-abd9-7dcf13e9e73c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fc4e0939b1ace5740d3f5ff41f7933809d577cf57d10db5808f26078ae80409b"
+  },
+  "id": "hGRvGNU5ib8XZBiY",
+  "tags": []
+}
